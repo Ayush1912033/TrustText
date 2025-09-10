@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
-export default function MessageInput({ onClassify }) {
-  const [message, setMessage] = useState('');
-
+export default function MessageInput({ message, setMessage, onClassify }) {
   const handleChange = (e) => {
-    const newMessage = e.target.value;
-    setMessage(newMessage);
-    onClassify(newMessage); // Real-time classification
+    setMessage(e.target.value);
+  };
+
+  const handleClassifyClick = () => {
+    onClassify(message);
   };
 
   return (
@@ -18,6 +18,7 @@ export default function MessageInput({ onClassify }) {
         rows="5"
         cols="50"
       />
+      <button onClick={handleClassifyClick}>Classify Now</button>
     </div>
   );
 }

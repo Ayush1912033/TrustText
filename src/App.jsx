@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import MessageInput from './components/MessageInput';
 import ResultsDisplay from './components/ResultsDisplay';
-
 import CsvUpload from './components/CsvUpload';
 import ExtensionDownload from './components/ExtensionDownload';
 
@@ -11,29 +10,43 @@ function App() {
   const [spamWords, setSpamWords] = useState([]);
   const [message, setMessage] = useState('');
 
-  const classifyMessage = (msg) => {
-    setMessage(msg);
-    // Example mock classification logic
-    const spamTriggers = ['buy', 'offer', 'click'];
-    const detectedWords = spamTriggers.filter(word => msg.includes(word));
-    const isSpam = detectedWords.length > 0;
+  const classifyMessage = async (msg) => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/classify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg }),
+      });
 
-    setResult(isSpam ? 'Spam' : 'Not Spam');
-    setConfidence(isSpam ? 95 : 99);
-    setSpamWords(detectedWords);
+      if (!response.ok) {
+        console.error('Server error:', response.statusText);
+        return;
+      }
+
+      const data = await response.json();
+      setResult(data.result);
+      setConfidence(data.confidence);
+      setSpamWords(data.spamWords);
+
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
   };
 
   const handleCsvUpload = (csvData) => {
     console.log('CSV Uploaded:', csvData);
-    // You can parse CSV and run classification for each line here
+    // You can parse CSV and run classification here
   };
 
   return (
     <div className="container">
       <h1>Spam Classification Website</h1>
-      <MessageInput onClassify={classifyMessage} />
+      <MessageInput
+        message={message}
+        setMessage={setMessage}
+        onClassify={classifyMessage}
+      />
       <ResultsDisplay result={result} confidence={confidence} spamWords={spamWords} />
-      
       <CsvUpload onCsvUpload={handleCsvUpload} />
       <ExtensionDownload />
     </div>
