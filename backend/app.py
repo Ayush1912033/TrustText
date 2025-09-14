@@ -10,7 +10,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)       # Initialize app FIRST
 CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
-
+CORS(app, resources={r"/*": {"origins": "chrome-extension://gadokcobfhbgdmlpogmlhcpjhggpaljo"}})
 # Load the trained model
 model = joblib.load('spam_classifier_model.pkl')
 
