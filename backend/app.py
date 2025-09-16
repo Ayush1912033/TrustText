@@ -40,7 +40,7 @@ def predict_spam(message):
     return {
         "result": label,
         "confidence": round(confidence * 100, 2),
-        "spamWords": spam_words
+        "Indicating Words": spam_words
     }
 
 
